@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Parqueadero Autos Colombia</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background-color: #f4f4f4; }
+        .container { background: white; padding: 20px; border-radius: 8px; max-width: 400px; margin-bottom: 20px; }
+        input, button { padding: 10px; margin: 5px 0; width: 90%; }
+        button { background-color: #28a745; color: white; border: none; cursor: pointer; }
+        .btn-salida { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+    <h2>Autos Colombia - Operador</h2>
+    
+    <div class="container">
+        <h3>Registrar Entrada</h3>
+        <input type="text" id="placaIn" placeholder="Ingrese Placa (ej. AAA123)">
+        <input type="text" id="novedad" placeholder="Novedades (rayones, etc)">
+        <button onclick="ingresar()">Validar y Asignar Celda</button>
+        <p id="msgIn"></p>
+    </div>
+
+    <div class="container">
+        <h3>Registrar Salida</h3>
+        <input type="text" id="placaOut" placeholder="Ingrese Placa">
+        <button class="btn-salida" onclick="salir()">Registrar Salida</button>
+        <p id="msgOut"></p>
+    </div>
+
+    <script>
+        let celdasDisponibles = 50;
+        function ingresar() {
+            let placa = document.getElementById('placaIn').value;
+            if(placa === '') { alert('Ingrese una placa'); return; }
+            celdasDisponibles--;
+            document.getElementById('msgIn').innerHTML = "<b style='color:green;'>Acceso Permitido.</b> Mensualidad activa.<br>Celda asignada. Celdas restantes: " + celdasDisponibles;
+        }
+        function salir() {
+            let placa = document.getElementById('placaOut').value;
+            if(placa === '') { alert('Ingrese una placa'); return; }
+            celdasDisponibles++;
+            document.getElementById('msgOut').innerHTML = "<b style='color:blue;'>Salida Registrada.</b> Celda liberada.<br>Celdas disponibles: " + celdasDisponibles;
+        }
+    </script>
+</body>
+</html>
