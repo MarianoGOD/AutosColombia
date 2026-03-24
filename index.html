@@ -44,14 +44,29 @@
 
     <div class="sidebar">
         <h2>Autos Colombia</h2>
-        <button class="menu-btn" onclick="cambiarPantalla('ingreso')">Ingreso y Salida</button>
+        <button class="menu-btn" onclick="cambiarPantalla('ingreso')" id="btn-ingreso">Ingreso y Salida</button>
         <button class="menu-btn active" onclick="cambiarPantalla('usuarios')" id="btn-usuarios">Gestión de usuarios</button>
         <button class="menu-btn" onclick="cambiarPantalla('celdas')" id="btn-celdas">Estado de celdas</button>
     </div>
 
     <div id="ingreso" class="main-content">
         <div class="header-title">Módulo de Ingreso y Salida</div>
-        <p>Aquí funciona la validación de placas de la Iteración 1.</p>
+        
+        <div class="form-group" style="justify-content: center; margin-top: 30px;">
+            <input type="text" id="placaIngreso" placeholder="Digite la Placa (Ej: XYZ-123)" style="max-width: 300px; font-size: 18px; text-align: center; text-transform: uppercase;">
+        </div>
+        
+        <div style="text-align: center; display: flex; justify-content: center; gap: 15px;">
+            <button class="btn-success" onclick="registrarIngreso()">Registrar Ingreso</button>
+            <button class="btn-success" style="background-color: #ef4444;" onclick="registrarSalida()">Registrar Salida</button>
+        </div>
+
+        <div id="mensajeTicket" style="margin-top: 30px; background: white; padding: 20px; border-radius: 8px; border: 1px dashed #cbd5e1; text-align: center; display: none;">
+            <h3 style="color: #0f172a; margin-bottom: 10px;">✅ Ticket de Ingreso Exitoso</h3>
+            <p style="font-size: 18px;"><strong>Placa:</strong> <span id="ticketPlaca"></span></p>
+            <p style="font-size: 18px; color: #22c55e;"><strong>Celda Asignada:</strong> <span id="ticketCelda"></span></p>
+            <p style="margin-top: 10px; font-size: 14px; color: #64748b;">Estado: Mensualidad Activa / Ingreso Autorizado</p>
+        </div>
     </div>
 
     <div id="usuarios" class="main-content active">
@@ -126,7 +141,8 @@
             // Mostrar la pantalla seleccionada
             document.getElementById(pantallaId).classList.add('active');
             
-            // Marcar el botón correcto (basado en el click o id)
+            // Marcar el botón correcto
+            if(pantallaId === 'ingreso') document.getElementById('btn-ingreso').classList.add('active');
             if(pantallaId === 'usuarios') document.getElementById('btn-usuarios').classList.add('active');
             if(pantallaId === 'celdas') document.getElementById('btn-celdas').classList.add('active');
         }
@@ -154,6 +170,39 @@
             document.getElementById('placa').value = "";
 
             alert("Usuario registrado con éxito en el sistema.");
+        }
+
+        // Funciones para la Iteración 1 (Ingreso y Salida)
+        function registrarIngreso() {
+            let placa = document.getElementById('placaIngreso').value.toUpperCase();
+            if(placa === "") {
+                alert("⚠️ Por favor, digite una placa para registrar el ingreso.");
+                return;
+            }
+            
+            // Simular asignación de celda automática (como en el Diagrama de Secuencia)
+            let celdaAsignada = Math.floor(Math.random() * 15) + 1; 
+            
+            // Mostrar el ticket en pantalla
+            document.getElementById('ticketPlaca').innerText = placa;
+            document.getElementById('ticketCelda').innerText = "Celda #" + celdaAsignada;
+            document.getElementById('mensajeTicket').style.display = 'block';
+            
+            alert("Ingreso autorizado. Diríjase a la Celda #" + celdaAsignada);
+            document.getElementById('placaIngreso').value = ""; // Limpiar campo
+        }
+
+        function registrarSalida() {
+            let placa = document.getElementById('placaIngreso').value.toUpperCase();
+            if(placa === "") {
+                alert("⚠️ Por favor, digite la placa para registrar la salida.");
+                return;
+            }
+            
+            // Ocultar ticket y simular salida
+            document.getElementById('mensajeTicket').style.display = 'none';
+            alert("🚗 Salida registrada con éxito para la placa: " + placa + ". ¡Buen viaje!");
+            document.getElementById('placaIngreso').value = ""; // Limpiar campo
         }
     </script>
 </body>
