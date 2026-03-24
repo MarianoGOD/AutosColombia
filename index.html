@@ -3,115 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Autos Colombia</title>
+    <title>Autos Colombia - Sistema de Gestión</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e9ecef; margin: 0; padding: 20px; }
-        .header { background-color: #004085; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header h1 { margin: 0; font-size: 24px; }
-        .container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 320px; }
-        .card h3 { margin-top: 0; color: #333; border-bottom: 2px solid #f8f9fa; padding-bottom: 10px; }
-        label { font-weight: bold; font-size: 14px; color: #555; }
-        input, select { width: 100%; padding: 10px; margin: 8px 0 20px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 15px; color: white; transition: 0.3s; }
-        .btn-in { background-color: #28a745; } .btn-in:hover { background-color: #218838; }
-        .btn-out { background-color: #dc3545; } .btn-out:hover { background-color: #c82333; }
-        .status { margin-top: 15px; padding: 10px; border-radius: 5px; font-size: 14px; display: none; }
-        .status.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block; }
-        .status.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block; }
-        .stats { text-align: center; margin-top: 30px; font-size: 18px; color: #555; }
-        #celdas-count { font-weight: bold; color: #004085; font-size: 22px; }
+        * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        body { display: flex; height: 100vh; background-color: #e2e8f0; }
+        
+        /* Menú Lateral */
+        .sidebar { width: 200px; background-color: #f8fafc; padding: 20px; border-right: 2px solid #cbd5e1; display: flex; flex-direction: column; gap: 15px; }
+        .sidebar h2 { font-size: 18px; text-align: center; margin-bottom: 20px; color: #0f172a; }
+        .menu-btn { padding: 15px 10px; border: 1px solid #cbd5e1; background: white; cursor: pointer; border-radius: 8px; font-size: 14px; text-align: center; transition: 0.3s; }
+        .menu-btn:hover { background-color: #e2e8f0; }
+        .menu-btn.active { font-weight: bold; border: 2px solid #334155; background-color: #f1f5f9; }
+
+        /* Contenido Principal */
+        .main-content { flex: 1; padding: 30px; display: none; }
+        .main-content.active { display: block; }
+        .header-title { background: white; padding: 10px; text-align: center; font-size: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #cbd5e1; }
+
+        /* Formularios y Buscador */
+        .form-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        input { padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px; flex: 1; }
+        .btn-success { background-color: #4ade80; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
+        .btn-success:hover { background-color: #22c55e; }
+        .search-bar { width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 20px; border: 1px solid #cbd5e1; text-align: center; }
+
+        /* Tabla de Usuarios */
+        table { width: 100%; border-collapse: collapse; background: white; text-align: center; }
+        th, td { border: 1px solid #cbd5e1; padding: 10px; }
+        th { background-color: #f1f5f9; font-size: 12px; }
+
+        /* Cuadrícula de Celdas */
+        .grid-celdas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .celda { height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 5px; color: white; font-weight: bold; border: 1px solid rgba(0,0,0,0.1); }
+        .celda.libre { background-color: #4ade80; }
+        .celda.ocupada { background-color: #ef4444; }
+        .celda.mantenimiento { background-color: #facc15; color: #333; font-size: 12px; text-align: center; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>🚗 Sistema de Gestión - Autos Colombia</h1>
-        <p>Módulo de Operador: Entradas y Salidas</p>
+    <div class="sidebar">
+        <h2>Autos Colombia</h2>
+        <button class="menu-btn" onclick="cambiarPantalla('ingreso')">Ingreso y Salida</button>
+        <button class="menu-btn active" onclick="cambiarPantalla('usuarios')" id="btn-usuarios">Gestión de usuarios</button>
+        <button class="menu-btn" onclick="cambiarPantalla('celdas')" id="btn-celdas">Estado de celdas</button>
     </div>
 
-    <div class="container">
-        <div class="card">
-            <h3>Registrar Entrada</h3>
-            <label>Placa del Vehículo</label>
-            <input type="text" id="placaIn" placeholder="Ej. ABC-123" style="text-transform: uppercase;">
-            
-            <label>Novedades (Opcional)</label>
-            <input type="text" id="novedad" placeholder="Rayones, golpes, etc.">
-            
-            <label>Celda Asignada</label>
-            <select id="celdaIn">
-                <option value="A1">Celda A1</option>
-                <option value="A2">Celda A2</option>
-                <option value="B1">Celda B1</option>
-                <option value="B2">Celda B2</option>
-            </select>
-
-            <button class="btn-in" onclick="ingresar()">Validar y Registrar Ingreso</button>
-            <div id="msgIn" class="status"></div>
-        </div>
-
-        <div class="card">
-            <h3>Registrar Salida</h3>
-            <label>Placa del Vehículo</label>
-            <input type="text" id="placaOut" placeholder="Ej. ABC-123" style="text-transform: uppercase;">
-            
-            <button class="btn-out" onclick="salir()">Registrar Salida y Liberar</button>
-            <div id="msgOut" class="status"></div>
-        </div>
+    <div id="ingreso" class="main-content">
+        <div class="header-title">Módulo de Ingreso y Salida</div>
+        <p>Aquí funciona la validación de placas de la Iteración 1.</p>
     </div>
 
-    <div class="stats">
-        Celdas Disponibles: <span id="celdas-count">50</span> / 50
+    <div id="usuarios" class="main-content active">
+        <div class="header-title">Registrar Nuevo usuario</div>
+        
+        <div class="form-group">
+            <input type="text" id="doc" placeholder="Documento">
+            <input type="text" id="nombre" placeholder="Nombre Completo">
+            <input type="text" id="tel" placeholder="Telefono">
+            <input type="text" id="placa" placeholder="Placa de Vehículo">
+        </div>
+        <button class="btn-success" onclick="guardarUsuario()">Guardar Usuario</button>
+
+        <input type="text" class="search-bar" placeholder="Buscar por placa o documento 🔎">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NOMBRE</th>
+                    <th>TELEFONO</th>
+                    <th>PLACA</th>
+                    <th>ACCIÓN</th>
+                </tr>
+            </thead>
+            <tbody id="tablaUsuarios">
+                <tr>
+                    <td>10627273</td><td>Mario Lopez</td><td>3245634566</td><td>XY-23Y</td><td>Estacionado</td>
+                </tr>
+                <tr>
+                    <td>134546777</td><td>Luisa Neir</td><td>3245675655</td><td>W43-S64</td><td>Revisión</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="celdas" class="main-content">
+        <div class="header-title">Administración y estado de celdas</div>
+        <input type="text" class="search-bar" placeholder="Buscar Placa 🔎" style="max-width: 400px; display: block; margin: 0 auto 20px;">
+        
+        <div class="grid-celdas">
+            <div class="celda libre">Libre</div>
+            <div class="celda libre">Libre</div>
+            <div class="celda ocupada">XY-34Y</div>
+            <div class="celda ocupada">WM45-4</div>
+            
+            <div class="celda libre">Libre</div>
+            <div class="celda ocupada">JJ-09K</div>
+            <div class="celda mantenimiento" onclick="alert('Celda en mantenimiento. ¿Desea cambiar estado?')">Mantenimiento<br>Cambiar Estado</div>
+            <div class="celda ocupada">HJ4-55</div>
+            
+            <div class="celda libre">Libre</div>
+            <div class="celda mantenimiento" onclick="alert('Celda en mantenimiento. ¿Desea cambiar estado?')">Mantenimiento<br>Cambiar Estado</div>
+            <div class="celda libre">Libre</div>
+            <div class="celda libre">Libre</div>
+            
+            <div class="celda libre">Libre</div>
+            <div class="celda ocupada">CH-77M</div>
+            <div class="celda ocupada">XY-67B</div>
+            <div class="celda ocupada">MM5-6M</div>
+        </div>
     </div>
 
     <script>
-        let celdasDisponibles = 50;
-
-        function ingresar() {
-            let placa = document.getElementById('placaIn').value.toUpperCase();
-            let msgBox = document.getElementById('msgIn');
+        // Función para cambiar entre pantallas
+        function cambiarPantalla(pantallaId) {
+            // Ocultar todas las pantallas
+            document.querySelectorAll('.main-content').forEach(el => el.classList.remove('active'));
+            // Quitar estilo activo de los botones
+            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
             
-            if(placa === '') { 
-                msgBox.className = 'status error';
-                msgBox.innerHTML = '⚠️ Por favor ingrese la placa del vehículo.';
-                return; 
-            }
-            if(celdasDisponibles <= 0) {
-                msgBox.className = 'status error';
-                msgBox.innerHTML = '⚠️ No hay celdas disponibles.';
-                return;
-            }
-
-            celdasDisponibles--;
-            document.getElementById('celdas-count').innerText = celdasDisponibles;
-            msgBox.className = 'status success';
-            msgBox.innerHTML = '✅ <b>Acceso Permitido.</b><br>Mensualidad activa validada.<br>Vehículo ' + placa + ' ingresado.';
-            document.getElementById('placaIn').value = '';
-            document.getElementById('novedad').value = '';
+            // Mostrar la pantalla seleccionada
+            document.getElementById(pantallaId).classList.add('active');
+            
+            // Marcar el botón correcto (basado en el click o id)
+            if(pantallaId === 'usuarios') document.getElementById('btn-usuarios').classList.add('active');
+            if(pantallaId === 'celdas') document.getElementById('btn-celdas').classList.add('active');
         }
 
-        function salir() {
-            let placa = document.getElementById('placaOut').value.toUpperCase();
-            let msgBox = document.getElementById('msgOut');
+        // Función para simular el guardado de un usuario
+        function guardarUsuario() {
+            let doc = document.getElementById('doc').value;
+            let nom = document.getElementById('nombre').value;
+            let tel = document.getElementById('tel').value;
+            let placa = document.getElementById('placa').value;
 
-            if(placa === '') { 
-                msgBox.className = 'status error';
-                msgBox.innerHTML = '⚠️ Por favor ingrese la placa del vehículo.';
-                return; 
-            }
-
-            if(celdasDisponibles >= 50) {
-                msgBox.className = 'status error';
-                msgBox.innerHTML = '⚠️ El parqueadero ya está vacío.';
+            if(doc === "" || nom === "" || placa === "") {
+                alert("Por favor, llena los campos principales (Documento, Nombre, Placa).");
                 return;
             }
 
-            celdasDisponibles++;
-            document.getElementById('celdas-count').innerText = celdasDisponibles;
-            msgBox.className = 'status success';
-            msgBox.innerHTML = '🚙 <b>Salida Registrada.</b><br>Vehículo ' + placa + ' retirado.<br>Celda liberada exitosamente.';
-            document.getElementById('placaOut').value = '';
+            // Agregar a la tabla
+            let tabla = document.getElementById('tablaUsuarios');
+            tabla.innerHTML += `<tr><td>${doc}</td><td>${nom}</td><td>${tel}</td><td>${placa}</td><td>Registrado</td></tr>`;
+            
+            // Limpiar campos
+            document.getElementById('doc').value = "";
+            document.getElementById('nombre').value = "";
+            document.getElementById('tel').value = "";
+            document.getElementById('placa').value = "";
+
+            alert("Usuario registrado con éxito en el sistema.");
         }
     </script>
 </body>
