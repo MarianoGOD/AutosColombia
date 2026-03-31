@@ -5,204 +5,223 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autos Colombia - Sistema de Gestión</title>
     <style>
-        * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        body { display: flex; height: 100vh; background-color: #e2e8f0; }
+        /* Estilos Generales y Modernos */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; margin: 0; background-color: #f4f6f9; color: #333; height: 100vh; overflow: hidden; }
+        h1, h2, h3 { margin-top: 0; color: #2c3e50; }
         
-        /* Menú Lateral */
-        .sidebar { width: 200px; background-color: #f8fafc; padding: 20px; border-right: 2px solid #cbd5e1; display: flex; flex-direction: column; gap: 15px; }
-        .sidebar h2 { font-size: 18px; text-align: center; margin-bottom: 20px; color: #0f172a; }
-        .menu-btn { padding: 15px 10px; border: 1px solid #cbd5e1; background: white; cursor: pointer; border-radius: 8px; font-size: 14px; text-align: center; transition: 0.3s; }
-        .menu-btn:hover { background-color: #e2e8f0; }
-        .menu-btn.active { font-weight: bold; border: 2px solid #334155; background-color: #f1f5f9; }
-
+        /* Menú Lateral (Iteración 1, 2 y 3) */
+        .sidebar { width: 260px; background-color: #1a252f; color: white; display: flex; flex-direction: column; padding-top: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 10; }
+        .sidebar h2 { text-align: center; font-size: 22px; color: #ecf0f1; margin-bottom: 30px; border-bottom: 1px solid #34495e; padding-bottom: 15px; }
+        .menu-btn { background: none; border: none; color: #bdc3c7; padding: 15px 25px; text-align: left; font-size: 16px; cursor: pointer; transition: all 0.3s ease; border-left: 4px solid transparent; width: 100%; display: block; }
+        .menu-btn:hover { background-color: #2c3e50; color: white; }
+        .menu-btn.activa { background-color: #2c3e50; color: #3498db; border-left-color: #3498db; font-weight: bold; }
+        
         /* Contenido Principal */
-        .main-content { flex: 1; padding: 30px; display: none; }
-        .main-content.active { display: block; }
-        .header-title { background: white; padding: 10px; text-align: center; font-size: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #cbd5e1; }
-
-        /* Formularios y Buscador */
-        .form-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        input { padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px; flex: 1; }
-        .btn-success { background-color: #4ade80; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
-        .btn-success:hover { background-color: #22c55e; }
-        .search-bar { width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 20px; border: 1px solid #cbd5e1; text-align: center; }
-
-        /* Tabla de Usuarios */
-        table { width: 100%; border-collapse: collapse; background: white; text-align: center; }
-        th, td { border: 1px solid #cbd5e1; padding: 10px; }
-        th { background-color: #f1f5f9; font-size: 12px; }
-
-        /* Cuadrícula de Celdas */
-        .grid-celdas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .celda { height: 80px; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 5px; color: white; font-weight: bold; border: 1px solid rgba(0,0,0,0.1); }
-        .celda.libre { background-color: #4ade80; }
-        .celda.ocupada { background-color: #ef4444; }
-        .celda.mantenimiento { background-color: #facc15; color: #333; font-size: 12px; text-align: center; cursor: pointer; }
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .seccion { display: none; animation: fadeIn 0.5s ease; }
+        .seccion.activa { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Tarjetas (Cards) */
+        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        
+        /* Formularios */
+        form { display: flex; flex-direction: column; gap: 15px; max-width: 500px; }
+        label { font-weight: 600; font-size: 14px; color: #555; }
+        input, select { padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; transition: border 0.3s; }
+        input:focus, select:focus { border-color: #3498db; outline: none; }
+        button[type="submit"], .btn-action { background-color: #27ae60; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.3s; margin-top: 10px; }
+        button[type="submit"]:hover, .btn-action:hover { background-color: #219653; }
+        
+        /* Tablas (Historial) */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #eee; padding: 15px; text-align: left; }
+        th { background-color: #f8f9fa; color: #333; font-weight: 600; }
+        tr:hover { background-color: #f1f2f6; }
+        
+        /* Grilla de Celdas (Iteración 2) */
+        .celdas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+        .celda { padding: 20px; border-radius: 8px; text-align: center; font-weight: bold; border: 2px solid #ccc; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .celda.libre { border-color: #2ecc71; color: #27ae60; background-color: #f0fdf4; }
+        .celda.ocupada { border-color: #e74c3c; color: #c0392b; background-color: #fef2f2; }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <h2>Autos Colombia</h2>
-        <button class="menu-btn" onclick="cambiarPantalla('ingreso')" id="btn-ingreso">Ingreso y Salida</button>
-        <button class="menu-btn active" onclick="cambiarPantalla('usuarios')" id="btn-usuarios">Gestión de usuarios</button>
-        <button class="menu-btn" onclick="cambiarPantalla('celdas')" id="btn-celdas">Estado de celdas</button>
+        <h2>🚗 Autos Colombia</h2>
+        <button class="menu-btn activa" onclick="mostrarSeccion('ingreso', this)">Ingreso y Salida</button>
+        <button class="menu-btn" onclick="mostrarSeccion('usuarios', this)">Gestión de usuarios</button>
+        <button class="menu-btn" onclick="mostrarSeccion('celdas', this)">Estado de celdas</button>
+        <button class="menu-btn" onclick="mostrarSeccion('pagos', this)">Gestión de Pagos</button>
     </div>
 
-    <div id="ingreso" class="main-content">
-        <div class="header-title">Módulo de Ingreso y Salida</div>
-        
-        <div class="form-group" style="justify-content: center; margin-top: 30px;">
-            <input type="text" id="placaIngreso" placeholder="Digite la Placa (Ej: XYZ-123)" style="max-width: 300px; font-size: 18px; text-align: center; text-transform: uppercase;">
-        </div>
-        
-        <div style="text-align: center; display: flex; justify-content: center; gap: 15px;">
-            <button class="btn-success" onclick="registrarIngreso()">Registrar Ingreso</button>
-            <button class="btn-success" style="background-color: #ef4444;" onclick="registrarSalida()">Registrar Salida</button>
-        </div>
+    <div class="main-content">
 
-        <div id="mensajeTicket" style="margin-top: 30px; background: white; padding: 20px; border-radius: 8px; border: 1px dashed #cbd5e1; text-align: center; display: none;">
-            <h3 style="color: #0f172a; margin-bottom: 10px;">✅ Ticket de Ingreso Exitoso</h3>
-            <p style="font-size: 18px;"><strong>Placa:</strong> <span id="ticketPlaca"></span></p>
-            <p style="font-size: 18px; color: #22c55e;"><strong>Celda Asignada:</strong> <span id="ticketCelda"></span></p>
-            <p style="margin-top: 10px; font-size: 14px; color: #64748b;">Estado: Mensualidad Activa / Ingreso Autorizado</p>
-        </div>
-    </div>
+        <section id="ingreso" class="seccion activa">
+            <h1>Ingreso y Salida de Vehículos</h1>
+            <div class="card">
+                <h3>Registrar Entrada</h3>
+                <form onsubmit="registrarAccion(event, 'Ingreso autorizado', 'entrada')">
+                    <label>Placa del Vehículo:</label>
+                    <input type="text" id="placaEntrada" required placeholder="Ej: ABC-123">
+                    <button type="submit">Autorizar Ingreso y Asignar Celda</button>
+                </form>
+            </div>
+            <div class="card">
+                <h3>Registrar Salida</h3>
+                <form onsubmit="registrarAccion(event, 'Salida registrada correctamente', 'salida')">
+                    <label>Placa del Vehículo:</label>
+                    <input type="text" id="placaSalida" required placeholder="Ej: ABC-123">
+                    <button type="submit" style="background-color: #e74c3c;">Registrar Salida y Liberar Celda</button>
+                </form>
+            </div>
+        </section>
 
-    <div id="usuarios" class="main-content active">
-        <div class="header-title">Registrar Nuevo usuario</div>
-        
-        <div class="form-group">
-            <input type="text" id="doc" placeholder="Documento">
-            <input type="text" id="nombre" placeholder="Nombre Completo">
-            <input type="text" id="tel" placeholder="Telefono">
-            <input type="text" id="placa" placeholder="Placa de Vehículo">
-        </div>
-        <button class="btn-success" onclick="guardarUsuario()">Guardar Usuario</button>
+        <section id="usuarios" class="seccion">
+            <h1>Gestión de Usuarios</h1>
+            <div class="card">
+                <h3>Registrar Nuevo Usuario</h3>
+                <form onsubmit="registrarUsuario(event)">
+                    <label>Documento de Identidad:</label>
+                    <input type="number" id="docUsuario" required placeholder="Ej: 10627273">
+                    <label>Nombre Completo:</label>
+                    <input type="text" id="nomUsuario" required placeholder="Ej: Mario Lopez">
+                    <label>Teléfono:</label>
+                    <input type="number" id="telUsuario" required placeholder="Ej: 3001234567">
+                    <label>Placa Principal:</label>
+                    <input type="text" id="placaUsuario" required placeholder="Ej: XY-23Y">
+                    <button type="submit">Guardar Usuario</button>
+                </form>
+            </div>
+        </section>
 
-        <input type="text" class="search-bar" placeholder="Buscar por placa o documento 🔎">
+        <section id="celdas" class="seccion">
+            <h1>Estado de Celdas</h1>
+            <div class="card">
+                <p>Monitoreo en tiempo real de la ocupación del parqueadero.</p>
+                <div class="celdas-grid">
+                    <div class="celda libre">Celda 1<br><small>Libre</small></div>
+                    <div class="celda ocupada">Celda 2<br><small>Ocupada (XY-23Y)</small></div>
+                    <div class="celda libre">Celda 3<br><small>Libre</small></div>
+                    <div class="celda libre">Celda 4<br><small>Libre</small></div>
+                    <div class="celda ocupada">Celda 5<br><small>Ocupada (W43-S64)</small></div>
+                    <div class="celda libre">Celda 6<br><small>Libre</small></div>
+                </div>
+            </div>
+        </section>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>NOMBRE</th>
-                    <th>TELEFONO</th>
-                    <th>PLACA</th>
-                    <th>ACCIÓN</th>
-                </tr>
-            </thead>
-            <tbody id="tablaUsuarios">
-                <tr>
-                    <td>10627273</td><td>Mario Lopez</td><td>3245634566</td><td>XY-23Y</td><td>Estacionado</td>
-                </tr>
-                <tr>
-                    <td>134546777</td><td>Luisa Neir</td><td>3245675655</td><td>W43-S64</td><td>Revisión</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div id="celdas" class="main-content">
-        <div class="header-title">Administración y estado de celdas</div>
-        <input type="text" class="search-bar" placeholder="Buscar Placa 🔎" style="max-width: 400px; display: block; margin: 0 auto 20px;">
-        
-        <div class="grid-celdas">
-            <div class="celda libre">Libre</div>
-            <div class="celda libre">Libre</div>
-            <div class="celda ocupada">XY-34Y</div>
-            <div class="celda ocupada">WM45-4</div>
+        <section id="pagos" class="seccion">
+            <h1>Gestión de Pagos y Mensualidades</h1>
             
-            <div class="celda libre">Libre</div>
-            <div class="celda ocupada">JJ-09K</div>
-            <div class="celda mantenimiento" onclick="alert('Celda en mantenimiento. ¿Desea cambiar estado?')">Mantenimiento<br>Cambiar Estado</div>
-            <div class="celda ocupada">HJ4-55</div>
-            
-            <div class="celda libre">Libre</div>
-            <div class="celda mantenimiento" onclick="alert('Celda en mantenimiento. ¿Desea cambiar estado?')">Mantenimiento<br>Cambiar Estado</div>
-            <div class="celda libre">Libre</div>
-            <div class="celda libre">Libre</div>
-            
-            <div class="celda libre">Libre</div>
-            <div class="celda ocupada">CH-77M</div>
-            <div class="celda ocupada">XY-67B</div>
-            <div class="celda ocupada">MM5-6M</div>
-        </div>
+            <div class="card">
+                <h3>Registrar Nuevo Pago</h3>
+                <form id="form-pagos" onsubmit="registrarPago(event)">
+                    <label for="placaPago">Placa del Vehículo:</label>
+                    <input type="text" id="placaPago" placeholder="Ej: XY-23Y" required>
+                    
+                    <label for="montoPago">Monto a Pagar ($):</label>
+                    <input type="number" id="montoPago" placeholder="150000" required>
+                    
+                    <label for="metodoPago">Método de Pago:</label>
+                    <select id="metodoPago">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+                    </select>
+                    
+                    <button type="submit">Registrar Pago y Generar Recibo</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>Historial de Pagos Recientes</h3>
+                <table id="tablaPagos">
+                    <thead>
+                        <tr>
+                            <th>Placa</th>
+                            <th>Fecha</th>
+                            <th>Monto</th>
+                            <th>Método</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>WM45-4</td>
+                            <td>31/03/2026</td>
+                            <td>$150,000</td>
+                            <td>Transferencia</td>
+                            <td style="color: #27ae60; font-weight: bold;">Al día</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
     </div>
 
     <script>
-        // Función para cambiar entre pantallas
-        function cambiarPantalla(pantallaId) {
-            // Ocultar todas las pantallas
-            document.querySelectorAll('.main-content').forEach(el => el.classList.remove('active'));
-            // Quitar estilo activo de los botones
-            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+        // Función para cambiar entre pantallas (Navegación)
+        function mostrarSeccion(idSeccion, elementoBoton) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.seccion').forEach(sec => sec.classList.remove('activa'));
+            // Quitar clase activa de todos los botones
+            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('activa'));
             
-            // Mostrar la pantalla seleccionada
-            document.getElementById(pantallaId).classList.add('active');
-            
-            // Marcar el botón correcto
-            if(pantallaId === 'ingreso') document.getElementById('btn-ingreso').classList.add('active');
-            if(pantallaId === 'usuarios') document.getElementById('btn-usuarios').classList.add('active');
-            if(pantallaId === 'celdas') document.getElementById('btn-celdas').classList.add('active');
+            // Mostrar la seccion deseada y activar botón
+            document.getElementById(idSeccion).classList.add('activa');
+            elementoBoton.classList.add('activa');
         }
 
-        // Función para simular el guardado de un usuario
-        function guardarUsuario() {
-            let doc = document.getElementById('doc').value;
-            let nom = document.getElementById('nombre').value;
-            let tel = document.getElementById('tel').value;
-            let placa = document.getElementById('placa').value;
-
-            if(doc === "" || nom === "" || placa === "") {
-                alert("Por favor, llena los campos principales (Documento, Nombre, Placa).");
-                return;
-            }
-
-            // Agregar a la tabla
-            let tabla = document.getElementById('tablaUsuarios');
-            tabla.innerHTML += `<tr><td>${doc}</td><td>${nom}</td><td>${tel}</td><td>${placa}</td><td>Registrado</td></tr>`;
-            
-            // Limpiar campos
-            document.getElementById('doc').value = "";
-            document.getElementById('nombre').value = "";
-            document.getElementById('tel').value = "";
-            document.getElementById('placa').value = "";
-
-            alert("Usuario registrado con éxito en el sistema.");
+        // Lógica Iteración 1: Ingreso y Salida
+        function registrarAccion(event, mensaje, tipo) {
+            event.preventDefault();
+            const placa = tipo === 'entrada' ? document.getElementById('placaEntrada').value : document.getElementById('placaSalida').value;
+            alert(`✅ ${mensaje}\nVehículo: ${placa.toUpperCase()}`);
+            event.target.reset();
         }
 
-        // Funciones para la Iteración 1 (Ingreso y Salida)
-        function registrarIngreso() {
-            let placa = document.getElementById('placaIngreso').value.toUpperCase();
-            if(placa === "") {
-                alert("⚠️ Por favor, digite una placa para registrar el ingreso.");
-                return;
-            }
-            
-            // Simular asignación de celda automática (como en el Diagrama de Secuencia)
-            let celdaAsignada = Math.floor(Math.random() * 15) + 1; 
-            
-            // Mostrar el ticket en pantalla
-            document.getElementById('ticketPlaca').innerText = placa;
-            document.getElementById('ticketCelda').innerText = "Celda #" + celdaAsignada;
-            document.getElementById('mensajeTicket').style.display = 'block';
-            
-            alert("Ingreso autorizado. Diríjase a la Celda #" + celdaAsignada);
-            document.getElementById('placaIngreso').value = ""; // Limpiar campo
+        // Lógica Iteración 2: Usuarios
+        function registrarUsuario(event) {
+            event.preventDefault();
+            const nombre = document.getElementById('nomUsuario').value;
+            alert(`✅ Usuario Registrado con Éxito\nNombre: ${nombre}\nEstado: Activo`);
+            event.target.reset();
         }
 
-        function registrarSalida() {
-            let placa = document.getElementById('placaIngreso').value.toUpperCase();
-            if(placa === "") {
-                alert("⚠️ Por favor, digite la placa para registrar la salida.");
-                return;
-            }
+        // Lógica Iteración 3: Gestión de Pagos
+        function registrarPago(event) {
+            event.preventDefault(); // Evita recargar la página
+
+            // Capturar datos del formulario
+            const placa = document.getElementById('placaPago').value.toUpperCase();
+            const monto = document.getElementById('montoPago').value;
+            const metodo = document.getElementById('metodoPago').value;
             
-            // Ocultar ticket y simular salida
-            document.getElementById('mensajeTicket').style.display = 'none';
-            alert("🚗 Salida registrada con éxito para la placa: " + placa + ". ¡Buen viaje!");
-            document.getElementById('placaIngreso').value = ""; // Limpiar campo
+            // Obtener fecha actual
+            const fecha = new Date().toLocaleDateString();
+
+            // Insertar fila dinámicamente en la tabla de Historial
+            const tabla = document.getElementById('tablaPagos').getElementsByTagName('tbody')[0];
+            const nuevaFila = tabla.insertRow(0); // Inserta arriba
+            
+            // Formatear monto con puntos
+            const montoFormateado = Number(monto).toLocaleString('es-CO');
+
+            nuevaFila.innerHTML = `
+                <td>${placa}</td>
+                <td>${fecha}</td>
+                <td>$${montoFormateado}</td>
+                <td>${metodo}</td>
+                <td style="color: #27ae60; font-weight: bold;">Al día</td>
+            `;
+
+            // Cumplir Requerimiento: Generar Ticket/Recibo visual
+            alert(`🧾 RECIBO DE PAGO GENERADO EXITOSAMENTE\n\n- Fecha: ${fecha}\n- Placa: ${placa}\n- Monto Pagado: $${montoFormateado}\n- Método: ${metodo}\n- Estado: Usuario Activo\n\n¡Gracias por preferir Autos Colombia!`);
+
+            // Limpiar formulario
+            document.getElementById('form-pagos').reset();
         }
     </script>
 </body>
